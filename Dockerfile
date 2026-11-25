@@ -5,7 +5,7 @@
 # ============================================================
 
 # Stage 1: Build client frontend
-FROM node:20-slim AS client-builder
+FROM node:22-slim AS client-builder
 WORKDIR /app/client
 
 # Copy client manifests
@@ -17,7 +17,7 @@ COPY ["React Vite Web/", "./"]
 RUN npm run build
 
 # Stage 2: Production Server Runtime
-FROM node:20-slim AS runner
+FROM node:22-slim AS runner
 WORKDIR /app
 
 # Install wget for healthcheck and build tools for fallback native compilation
