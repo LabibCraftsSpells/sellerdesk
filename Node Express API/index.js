@@ -168,16 +168,17 @@ if (require.main === module) {
   }
 
   const DEFAULT_PORT = parseInt(process.env.PORT || '5001', 10);
-  const server = app.listen(DEFAULT_PORT, () => {
-    console.log(`[Server] SellerDesk API running on port ${DEFAULT_PORT} (${process.env.NODE_ENV || 'development'})`);
+  const HOST = '0.0.0.0';
+  const server = app.listen(DEFAULT_PORT, HOST, () => {
+    console.log(`[Server] SellerDesk API running on ${HOST}:${DEFAULT_PORT} (${process.env.NODE_ENV || 'development'})`);
   });
 
   server.on('error', (err) => {
     if (err.code === 'EADDRINUSE') {
       const fallbackPort = DEFAULT_PORT + 1;
       console.warn(`[Server] Port ${DEFAULT_PORT} is in use. Retrying on port ${fallbackPort}...`);
-      app.listen(fallbackPort, () => {
-        console.log(`[Server] SellerDesk API running on port ${fallbackPort} (${process.env.NODE_ENV || 'development'})`);
+      app.listen(fallbackPort, HOST, () => {
+        console.log(`[Server] SellerDesk API running on ${HOST}:${fallbackPort} (${process.env.NODE_ENV || 'development'})`);
       });
     } else {
       throw err;

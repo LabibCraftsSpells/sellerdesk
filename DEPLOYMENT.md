@@ -1,12 +1,53 @@
 # SellerDesk — Production Deployment Guide
 
-This guide covers two production deployment strategies for **SellerDesk**:
-- **Method 1**: Standard Linux VPS (Ubuntu/Debian) with Node.js, systemd, and Nginx.
-- **Method 2**: Docker & Docker Compose containerized deployment.
+This guide covers three production deployment strategies for **SellerDesk**:
+- **Method 1**: Cloud PaaS Deployment (Render / Railway) — Zero-devops 1-click cloud hosting.
+- **Method 2**: Standard Linux VPS (Ubuntu/Debian) with Node.js, systemd, and Nginx.
+- **Method 3**: Docker & Docker Compose containerized deployment.
 
 ---
 
-## Deployment Strategy 1: Linux VPS (Nginx + systemd + SSL)
+## Deployment Strategy 1: Cloud PaaS (Render Web Service)
+
+Render provides free or low-cost automated hosting with native Git integration, automated HTTPS, and zero server maintenance.
+
+### Option A: 1-Click Blueprint (Recommended)
+1. In the Render Dashboard, click **New +** -> **Blueprint**.
+2. Connect your GitHub repository (`sellerdesk`).
+3. Render reads `render.yaml` automatically and configures:
+   - **Service Type**: Web Service
+   - **Runtime**: Node
+   - **Build Command**: `npm install && npm run build`
+   - **Start Command**: `npm start`
+   - **Health Check Path**: `/api/health`
+4. Click **Apply**. Render will automatically install dependencies across both workspaces, compile the Vite frontend, run database migrations, seed demo data, and expose the live application over HTTPS.
+
+### Option B: Manual Web Service Setup
+1. In the Render Dashboard, click **New +** -> **Web Service**.
+2. Select your repository.
+3. Configure the following fields:
+   - **Name**: `sellerdesk` (or your choice)
+   - **Region**: Oregon (or closest to your users)
+   - **Branch**: `main`
+   - **Root Directory**: *(leave blank for root)*
+   - **Runtime**: `Node`
+   - **Build Command**: `npm install && npm run build`
+   - **Start Command**: `npm start`
+   - **Instance Type**: `Free`
+4. Expand **Advanced** -> **Environment Variables** and add:
+   - `NODE_ENV`: `production`
+   - `PORT`: `5001`
+   - `AUTO_SEED`: `true` (automatically initializes tables and demo accounts on start)
+   - `DB_CLIENT`: `sqlite` (or `mysql` if using external MySQL)
+   - `SQLITE_FILE`: `./database/sellerdesk.sqlite`
+   - `JWT_SECRET`: *(Generate a random 32+ character string)*
+   - `JWT_EXPIRES_IN`: `7d`
+5. Under **Health Check Path**, enter `/api/health`.
+6. Click **Deploy Web Service**.
+
+---
+
+## Deployment Strategy 2: Linux VPS (Nginx + systemd + SSL)
 
 This method provides optimal performance and direct system control on a cloud server (DigitalOcean, Linode, AWS EC2, Hetzner, etc.).
 
@@ -145,7 +186,7 @@ sudo certbot --nginx -d app.yourstore.com
 
 ---
 
-## Deployment Strategy 2: Docker & Docker Compose
+## Deployment Strategy 3: Docker & Docker Compose
 
 Docker containerization packages the entire runtime, frontend build, and backend into an isolated, self-contained container.
 

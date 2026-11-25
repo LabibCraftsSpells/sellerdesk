@@ -6,9 +6,9 @@
   "scripts": {
     "setup": "node scripts/setup.js",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
-    "dev:server": "cd \"Node Express API\" && npm run dev",
-    "dev:client": "cd \"React Vite Web\" && npm run dev",
-    "build": "cd \"React Vite Web\" && npm run build",
+    "dev:server": "npm --workspace=\"Node Express API\" run dev",
+    "dev:client": "npm --workspace=\"React Vite Web\" run dev",
+    "build": "npm --workspace=\"React Vite Web\" run build",
     "start": "node scripts/start-production.js",
     "test": "node scripts/test-api.js",
     "migrate": "node database/migrate.js",
@@ -23,5 +23,9 @@
   "devDependencies": {
     "concurrently": "^8.2.2",
     "puppeteer-core": "^25.18.1"
-  }
+  },
+  "workspaces": [
+    "Node Express API",
+    "React Vite Web"
+  ]
 }

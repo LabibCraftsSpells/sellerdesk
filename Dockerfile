@@ -8,11 +8,11 @@ FROM node:20-alpine AS client-builder
 WORKDIR /app/client
 
 # Copy client manifests
-COPY "React Vite Web/package*.json" ./
+COPY ["React Vite Web/package.json", "React Vite Web/package-lock.json*", "./"]
 RUN npm ci
 
 # Copy client source code and build
-COPY "React Vite Web/" ./
+COPY ["React Vite Web/", "./"]
 RUN npm run build
 
 # Stage 2: Production Server Runtime
@@ -26,16 +26,16 @@ ENV NODE_ENV=production
 ENV PORT=5001
 
 # Copy root & server manifests
-COPY package*.json ./
-COPY "Node Express API/package*.json" "./Node Express API/"
+COPY ["package.json", "package-lock.json*", "./"]
+COPY ["Node Express API/package.json", "Node Express API/package-lock.json*", "./Node Express API/"]
+COPY ["React Vite Web/package.json", "React Vite Web/package-lock.json*", "./React Vite Web/"]
 RUN ln -s "Node Express API" server
 
 # Install production dependencies
-RUN npm ci --omit=dev && \
-    cd "Node Express API" && npm ci --omit=dev
+RUN npm ci --omit=dev
 
 # Copy server code, database schemas, and migration scripts
-COPY "Node Express API/" "./Node Express API/"
+COPY ["Node Express API/", "./Node Express API/"]
 COPY database/ ./database/
 COPY scripts/ ./scripts/
 
