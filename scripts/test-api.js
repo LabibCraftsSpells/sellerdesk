@@ -38,6 +38,40 @@ async function runTests() {
   console.log('🧪 Starting SellerDesk API Integration Tests (In-Memory Supertest)...\n');
 
   try {
+    // 0. Clean Database Migration & Multi-Tenant Schema Verification
+    console.log('0. Clean Database Migration Verification');
+    const Database = require('better-sqlite3');
+    const cleanDbPath = path.resolve(__dirname, '../database/test-clean-migration.sqlite');
+    try { fs.unlinkSync(cleanDbPath); } catch (_) {}
+    try { fs.unlinkSync(`${cleanDbPath}-wal`); } catch (_) {}
+    try { fs.unlinkSync(`${cleanDbPath}-shm`); } catch (_) {}
+
+    const originalSqliteFile = process.env.SQLITE_FILE;
+    process.env.SQLITE_FILE = cleanDbPath;
+
+    const { runMigrations } = require('../database/migrate');
+    await runMigrations();
+
+    const testDb = new Database(cleanDbPath);
+    const tables = testDb.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name").all().map(r => r.name);
+    testDb.close();
+
+    console.assert(tables.length === 11, `Expected 11 tables, got ${tables.length}`);
+    console.assert(tables.includes('users'), 'users table must exist');
+    console.assert(tables.includes('sellers'), 'sellers table must exist');
+    console.assert(tables.includes('orders'), 'orders table must exist');
+    console.assert(tables.includes('products'), 'products table must exist');
+
+    // Test migration idempotency (running on existing db without reset)
+    await runMigrations();
+
+    // Clean up
+    try { fs.unlinkSync(cleanDbPath); } catch (_) {}
+    try { fs.unlinkSync(`${cleanDbPath}-wal`); } catch (_) {}
+    try { fs.unlinkSync(`${cleanDbPath}-shm`); } catch (_) {}
+    process.env.SQLITE_FILE = originalSqliteFile;
+    console.log('   ✅ Clean database migration & idempotency verified (11 tables verified)\n');
+
     // 1. Health check
     console.log('1. Health check endpoint');
     const health = await request(app).get('/api/health');

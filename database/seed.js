@@ -198,7 +198,15 @@ async function run() {
     const dbFile = path.isAbsolute(rawFile) ? rawFile : path.resolve(projectRoot, rawFile);
     console.log(`[seed:SQLite] Connecting to SQLite: ${dbFile}`);
     const sqlite = new Database(dbFile);
-    sqlite.pragma('journal_mode = WAL');
+    try {
+      sqlite.pragma('journal_mode = WAL');
+    } catch (err) {
+      console.warn(`[seed:SQLite] WAL mode not supported (${err.message}); falling back to DELETE mode.`);
+      try {
+        sqlite.pragma('journal_mode = DELETE');
+      } catch (_) {}
+    }
+    sqlite.pragma('busy_timeout = 5000');
 
     connection = {
       query: async (sql, params = []) => {
@@ -659,7 +667,14 @@ function statusFlow(finalStatus) {
   return ['new'];
 }
 
-run().catch((err) => {
-  console.error('[seed] ❌ Error:', err);
-  process.exit(1);
-});
+if (require.main === module) {
+  run().catch((err) => {
+    console.error('\n[seed] ❌ Fatal error:', err.stack || err);
+    if (err.code) console.error('[seed] Error Code:', err.code);
+    process.exit(1);
+  });
+}
+
+module.exports = {
+  runSeed: run,
+};

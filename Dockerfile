@@ -1,10 +1,11 @@
 # ============================================================
 # SellerDesk Production Dockerfile
 # Multi-stage build: compiles Vite frontend and runs Express backend
+# Uses Debian Slim (glibc) for 100% native module compatibility with better-sqlite3
 # ============================================================
 
 # Stage 1: Build client frontend
-FROM node:20-alpine AS client-builder
+FROM node:20-slim AS client-builder
 WORKDIR /app/client
 
 # Copy client manifests
@@ -16,11 +17,17 @@ COPY ["React Vite Web/", "./"]
 RUN npm run build
 
 # Stage 2: Production Server Runtime
-FROM node:20-alpine AS runner
+FROM node:20-slim AS runner
 WORKDIR /app
 
-# Install build tools for native compilation if needed
-RUN apk add --no-cache python3 make g++ wget
+# Install wget for healthcheck and build tools for fallback native compilation
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    wget \
+    ca-certificates \
+    python3 \
+    make \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
 
 ENV NODE_ENV=production
 ENV PORT=5001
@@ -31,7 +38,7 @@ COPY ["Node Express API/package.json", "Node Express API/package-lock.json*", ".
 COPY ["React Vite Web/package.json", "React Vite Web/package-lock.json*", "./React Vite Web/"]
 RUN ln -s "Node Express API" server
 
-# Install production dependencies
+# Install production dependencies (official prebuilt better-sqlite3 binaries for glibc)
 RUN npm ci --omit=dev
 
 # Copy server code, database schemas, and migration scripts
@@ -45,8 +52,8 @@ RUN mkdir -p "React Vite Web" client && \
     ln -s /app/dist "React Vite Web/dist" && \
     ln -s /app/dist client/dist
 
-# Create storage directories
-RUN mkdir -p /app/database /app/uploads
+# Create storage directories and set full read/write permissions
+RUN mkdir -p /app/database /app/uploads && chmod -R 777 /app/database /app/uploads
 
 EXPOSE 5001
 

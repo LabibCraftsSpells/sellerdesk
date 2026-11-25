@@ -45,7 +45,20 @@ async function runSqlite() {
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 
   const sqlite = new Database(dbFile);
-  sqlite.pragma('journal_mode = WAL');
+
+  // Performance and safety pragmas with filesystem resilience
+  try {
+    sqlite.pragma('journal_mode = WAL');
+  } catch (err) {
+    console.warn(`[migrate:SQLite] WAL journal_mode not supported on this filesystem (${err.message}); falling back to DELETE mode.`);
+    try {
+      sqlite.pragma('journal_mode = DELETE');
+    } catch (fallbackErr) {
+      console.warn(`[migrate:SQLite] journal_mode fallback warning: ${fallbackErr.message}`);
+    }
+  }
+
+  sqlite.pragma('busy_timeout = 5000');
   sqlite.pragma('foreign_keys = ON');
 
   const isFresh = process.argv.includes('--fresh');
@@ -144,7 +157,16 @@ async function main() {
   }
 }
 
-main().catch((err) => {
-  console.error('[migrate] ❌  Error:', err);
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch((err) => {
+    console.error('\n[migrate] ❌ Error:', err.stack || err);
+    if (err.code) console.error('[migrate] Error Code:', err.code);
+    process.exit(1);
+  });
+}
+
+module.exports = {
+  runMigrations: main,
+  runSqlite,
+  runMysql,
+};

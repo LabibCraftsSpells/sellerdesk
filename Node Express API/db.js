@@ -66,8 +66,19 @@ if (DB_CLIENT === 'mysql') {
 
   const sqlite = new Database(dbFile);
 
-  // Performance and safety pragmas
-  sqlite.pragma('journal_mode = WAL');
+  // Performance and safety pragmas with filesystem resilience
+  try {
+    sqlite.pragma('journal_mode = WAL');
+  } catch (err) {
+    console.warn(`[DB:SQLite] WAL journal_mode not supported on this filesystem (${err.message}); falling back to DELETE mode.`);
+    try {
+      sqlite.pragma('journal_mode = DELETE');
+    } catch (fallbackErr) {
+      console.warn(`[DB:SQLite] journal_mode fallback warning: ${fallbackErr.message}`);
+    }
+  }
+
+  sqlite.pragma('busy_timeout = 5000');
   sqlite.pragma('foreign_keys = ON');
 
   console.log(`[DB:SQLite] Connected to local database file: ${dbFile}`);
