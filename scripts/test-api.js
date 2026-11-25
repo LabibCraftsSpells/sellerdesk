@@ -26,7 +26,12 @@ const serverDir = fs.existsSync(path.resolve(__dirname, '../Node Express API'))
   ? '../Node Express API'
   : '../server';
 
-const request = require(path.join(serverDir, 'node_modules/supertest'));
+let request;
+try {
+  request = require('supertest');
+} catch {
+  request = require(path.join(serverDir, 'node_modules/supertest'));
+}
 const app = require(path.join(serverDir, 'index'));
 
 async function runTests() {
