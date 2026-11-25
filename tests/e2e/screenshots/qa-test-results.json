@@ -1,0 +1,269 @@
+{
+  "phase1": [
+    {
+      "name": "Admin Login & Dashboard Redirection",
+      "passed": true,
+      "details": "URL: http://localhost:5173/dashboard",
+      "error": null
+    },
+    {
+      "name": "Dashboard Analytics Cards Presence",
+      "passed": true,
+      "details": "",
+      "error": null
+    },
+    {
+      "name": "Sidebar Navigation to Orders Pipeline",
+      "passed": true,
+      "details": "Loaded: http://localhost:5173/orders",
+      "error": null
+    },
+    {
+      "name": "Sidebar Navigation to Products Catalog",
+      "passed": true,
+      "details": "Loaded: http://localhost:5173/products",
+      "error": null
+    },
+    {
+      "name": "Sidebar Navigation to Customers Directory",
+      "passed": true,
+      "details": "Loaded: http://localhost:5173/customers",
+      "error": null
+    },
+    {
+      "name": "Sidebar Navigation to COD Tracker",
+      "passed": true,
+      "details": "Loaded: http://localhost:5173/cod",
+      "error": null
+    },
+    {
+      "name": "Sidebar Navigation to Reports Overview",
+      "passed": true,
+      "details": "Loaded: http://localhost:5173/reports",
+      "error": null
+    },
+    {
+      "name": "Sidebar Navigation to Profit Report",
+      "passed": true,
+      "details": "Loaded: http://localhost:5173/reports/profit",
+      "error": null
+    },
+    {
+      "name": "Sidebar Navigation to Settings & Team",
+      "passed": true,
+      "details": "Loaded: http://localhost:5173/settings",
+      "error": null
+    },
+    {
+      "name": "Sidebar Navigation to Change Password",
+      "passed": true,
+      "details": "Loaded: http://localhost:5173/profile/change-password",
+      "error": null
+    },
+    {
+      "name": "Product Creation via Admin Form",
+      "passed": true,
+      "details": "SKU: QA-703511",
+      "error": null
+    },
+    {
+      "name": "Created Product Searchable in Catalog",
+      "passed": true,
+      "details": "",
+      "error": null
+    },
+    {
+      "name": "Order Creation with Payment Method: COD",
+      "passed": true,
+      "details": "URL: http://localhost:5173/orders/71",
+      "error": null
+    },
+    {
+      "name": "Order Creation with Payment Method: BKASH",
+      "passed": true,
+      "details": "URL: http://localhost:5173/orders/72",
+      "error": null
+    },
+    {
+      "name": "Order Creation with Payment Method: NAGAD",
+      "passed": true,
+      "details": "URL: http://localhost:5173/orders/73",
+      "error": null
+    },
+    {
+      "name": "Order Creation with Payment Method: ADVANCE",
+      "passed": true,
+      "details": "URL: http://localhost:5173/orders/74",
+      "error": null
+    },
+    {
+      "name": "Order Status Transition: Confirmed (Stock Deducted)",
+      "passed": true,
+      "details": "",
+      "error": null
+    },
+    {
+      "name": "Order Status Transition: Shipped",
+      "passed": true,
+      "details": "",
+      "error": null
+    },
+    {
+      "name": "Order Status Transition: Delivered (Ready for COD)",
+      "passed": true,
+      "details": "",
+      "error": null
+    },
+    {
+      "name": "Order Status Transition: Returned (Stock Restored)",
+      "passed": true,
+      "details": "",
+      "error": null
+    },
+    {
+      "name": "Print Invoice & Courier Slip Layout",
+      "passed": true,
+      "details": "",
+      "error": null
+    },
+    {
+      "name": "COD Tracking Module Loaded",
+      "passed": true,
+      "details": "",
+      "error": null
+    },
+    {
+      "name": "Admin Profit Calculations Page Rendered",
+      "passed": true,
+      "details": "",
+      "error": null
+    },
+    {
+      "name": "Admin Settings Persistence",
+      "passed": true,
+      "details": "Settings saved successfully",
+      "error": null
+    }
+  ],
+  "phase2": [
+    {
+      "name": "Staff Login & Operational Dashboard Access",
+      "passed": true,
+      "details": "Staff URL: http://localhost:5173/dashboard",
+      "error": null
+    },
+    {
+      "name": "Staff Access to Operational Module: Orders Pipeline",
+      "passed": true,
+      "details": "",
+      "error": null
+    },
+    {
+      "name": "Staff Access to Operational Module: New Order Entry",
+      "passed": true,
+      "details": "",
+      "error": null
+    },
+    {
+      "name": "Staff Access to Operational Module: Products Catalog",
+      "passed": true,
+      "details": "",
+      "error": null
+    },
+    {
+      "name": "Staff Access to Operational Module: Customers Directory",
+      "passed": true,
+      "details": "",
+      "error": null
+    },
+    {
+      "name": "Staff Access to Operational Module: COD Tracker",
+      "passed": true,
+      "details": "",
+      "error": null
+    },
+    {
+      "name": "Staff Route Guard: Blocked & Redirected from Reports Page",
+      "passed": true,
+      "details": "Redirected to: http://localhost:5173/dashboard",
+      "error": null
+    },
+    {
+      "name": "Staff Route Guard: Blocked & Redirected from Profit Report",
+      "passed": true,
+      "details": "Redirected to: http://localhost:5173/dashboard",
+      "error": null
+    },
+    {
+      "name": "Staff Route Guard: Blocked & Redirected from Settings Page",
+      "passed": true,
+      "details": "Redirected to: http://localhost:5173/dashboard",
+      "error": null
+    },
+    {
+      "name": "Staff Route Guard: Blocked & Redirected from Product Creation Page",
+      "passed": true,
+      "details": "Redirected to: http://localhost:5173/dashboard",
+      "error": null
+    },
+    {
+      "name": "Backend RBAC: Staff Blocked from /api/reports/profit",
+      "passed": true,
+      "details": "Status: 403",
+      "error": null
+    },
+    {
+      "name": "Backend RBAC: Staff Blocked from PUT /api/settings",
+      "passed": true,
+      "details": "Status: 403",
+      "error": null
+    },
+    {
+      "name": "Backend RBAC: Staff Blocked from /api/auth/users",
+      "passed": true,
+      "details": "Status: 403",
+      "error": null
+    }
+  ],
+  "phase3": [
+    {
+      "name": "Mobile Viewport: Persistent Bottom Navigation Active",
+      "passed": true,
+      "details": "",
+      "error": null
+    },
+    {
+      "name": "Mobile Form Inputs: Mobile-First Big Touch Targets Verified",
+      "passed": true,
+      "details": "",
+      "error": null
+    },
+    {
+      "name": "Mobile Orders List Responsive Layout",
+      "passed": true,
+      "details": "",
+      "error": null
+    },
+    {
+      "name": "Bangla / English i18n Language Toggle Functionality",
+      "passed": true,
+      "details": "Bangla text active: true",
+      "error": null
+    }
+  ],
+  "consoleErrors": [
+    {
+      "url": "http://localhost:5173/dashboard",
+      "text": "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+    },
+    {
+      "url": "http://localhost:5173/dashboard",
+      "text": "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+    },
+    {
+      "url": "http://localhost:5173/dashboard",
+      "text": "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+    }
+  ],
+  "networkFailures": []
+}

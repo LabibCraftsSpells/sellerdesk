@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  # ── Production MariaDB / MySQL Service ───────────────────────
+  db:
+    image: mariadb:10.6
+    container_name: sellerdesk-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: sellerdesk_root_pass
+      MYSQL_DATABASE: sellerdesk
+      MYSQL_USER: sellerdesk
+      MYSQL_PASSWORD: sellerdesk_secure_pass
+    volumes:
+      - sellerdesk-db-data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./database/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "sellerdesk", "-psellerdesk_secure_pass"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+
+  # ── SellerDesk Application Server ────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sellerdesk-app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "5001:5001"
+    environment:
+      - NODE_ENV=production
+      - PORT=5001
+      - JWT_SECRET=change_this_to_a_secure_random_64_char_string_for_production
+      - JWT_EXPIRES_IN=7d
+      - DB_CLIENT=mysql
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_USER=sellerdesk
+      - DB_PASSWORD=sellerdesk_secure_pass
+      - DB_NAME=sellerdesk
+      - CORS_ORIGIN=http://localhost:5001
+    volumes:
+      # Uploaded media storage
+      - sellerdesk-uploads:/app/uploads
+      # Fallback SQLite persistent volume (if run in sqlite mode)
+      - sellerdesk-sqlite-data:/app/database
+
+volumes:
+  sellerdesk-db-data:
+    driver: local
+  sellerdesk-uploads:
+    driver: local
+  sellerdesk-sqlite-data:
+    driver: local

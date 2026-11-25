@@ -1,0 +1,27 @@
+{
+  "name": "sellerdesk",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Order, Inventory & COD Manager for Facebook/WhatsApp Sellers",
+  "scripts": {
+    "setup": "node scripts/setup.js",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "cd \"Node Express API\" && npm run dev",
+    "dev:client": "cd \"React Vite Web\" && npm run dev",
+    "build": "cd \"React Vite Web\" && npm run build",
+    "start": "node scripts/start-production.js",
+    "test": "node scripts/test-api.js",
+    "migrate": "node database/migrate.js",
+    "seed": "node database/seed.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^13.2.0",
+    "dotenv": "^16.4.5",
+    "mysql2": "^3.9.7"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "puppeteer-core": "^25.18.1"
+  }
+}
